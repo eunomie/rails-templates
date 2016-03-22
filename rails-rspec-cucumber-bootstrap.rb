@@ -4,8 +4,48 @@
 # - rubocop
 # - coverage
 
+options = {
+           git_config: false,
+           git: { user: '', email: '' },
+           init_db: false,
+           ruby_version: RUBY_VERSION
+          }
+
+puts ""
+puts "    Rails configuration"
+puts "    ==================="
+puts ""
+
+puts "    Git"
+puts "    ---"
+puts ""
+
+options[:git_config] = yes? "Do you want to configure git user? [yn]"
+if options[:git_config]
+  options[:git][:user] = ask "Name:"
+  options[:git][:email] = ask "Email:"
+end
+
+puts ""
+puts "    Ruby"
+puts "    ----"
+puts ""
+
+if yes? "Do you want to configure the ruby version? Current is '#{options[:ruby_version]}' [yn]"
+  options[:ruby_version] = ask "Ruby version:"
+end
+
+puts ""
+puts "    Rails"
+puts "    -----"
+puts ""
+
+options[:init_db] = yes? "Do you want to create the database? [yn]"
+
+puts ""
+
 file '.ruby-version', <<RUBY
-ruby-2.3.0
+ruby-#{options[:ruby_version]}
 RUBY
 
 gem_group :development, :test do
@@ -71,7 +111,7 @@ DB
 
 append_to_file 'Gemfile', <<RUBY
 
-ruby "2.3.0"
+ruby "#{options[:ruby_version]}"
 RUBY
 
 remove_file 'app/assets/stylesheets/application.css'
@@ -145,15 +185,13 @@ Shoulda::Matchers.configure do |config|
 end
 SHOULDA
 
-  rake 'db:create' if yes? "Do you want to create the database? [yn]"
+  rake 'db:create' if options[:init_db]
 
   git :init
 
-  if yes? "Do you want to configure git user? [yn]"
-    user = ask("Name:")
-    email = ask("Email:")
-    git config: "user.name \"#{user}\""
-    git config: "user.email \"#{email}\""
+  if options[:git_config]
+    git config: "user.name \"#{options[:git][:user]}\""
+    git config: "user.email \"#{options[:git][:email]}\""
   end
 
   git commit: '--allow-empty -m "Init repo"'
