@@ -157,6 +157,15 @@ SHOULDA
   end
 
   git commit: '--allow-empty -m "Init repo"'
+
+  git checkout: '-b init'
+  git add: '.ruby-version'
+  git commit: '-m "Ruby"'
+
   git add: '.'
   git commit: '-a -m "rails-rspec-cucumber init"'
+
+  git checkout: 'master'
+  git merge: '--no-ff -m "Initialize Rails boilerplate" init'
+  git branch: '-d init'
 end
