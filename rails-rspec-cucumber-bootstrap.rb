@@ -8,7 +8,8 @@ options = {
            git_config: false,
            git: { user: '', email: '' },
            init_db: false,
-           ruby_version: RUBY_VERSION
+           ruby_version: RUBY_VERSION,
+           rubocop: false
           }
 
 puts ""
@@ -35,6 +36,8 @@ if yes? "Do you want to configure the ruby version? Current is '#{options[:ruby_
   options[:ruby_version] = ask "Ruby version:"
 end
 
+options[:rubocop] = yes? "Do you want to install rubocop? [yn]"
+
 puts ""
 puts "    Rails"
 puts "    -----"
@@ -52,6 +55,9 @@ gem_group :development, :test do
   gem 'rspec-rails', '~> 3.0'
   gem 'factory_girl_rails'
   gem 'faker'
+  if options[:rubocop]
+    gem 'rubocop', require: false
+  end
 end
 
 gem_group :test do
@@ -165,6 +171,11 @@ rakefile("test.rake") do
     end
   TASK
 end
+
+file '.rubocop.yml', <<RUBOCOP
+Rails:
+  Enabled: true
+RUBOCOP
 
 after_bundle do
   run 'spring stop'
