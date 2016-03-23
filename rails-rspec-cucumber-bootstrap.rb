@@ -9,7 +9,8 @@ options = {
            git: { user: '', email: '' },
            init_db: false,
            ruby_version: RUBY_VERSION,
-           rubocop: false
+           rubocop: false,
+           simplecov: false
           }
 
 puts ""
@@ -37,6 +38,8 @@ if yes? "Do you want to configure the ruby version? Current is '#{options[:ruby_
 end
 
 options[:rubocop] = yes? "Do you want to install rubocop? [yn]"
+
+options[:simplecov] = yes? "Do you want to enable simplecov? [yn]"
 
 puts ""
 puts "    Rails"
@@ -68,6 +71,9 @@ gem_group :test do
   gem 'guard'
   gem 'guard-rspec', require: false
   gem 'guard-cucumber', require: false
+  if options[:simplecov]
+    gem 'simplecov', :require => false
+  end
 end
 
 gem 'turbolinks', '~> 5.0.0.beta'
@@ -195,6 +201,18 @@ Shoulda::Matchers.configure do |config|
   end
 end
 SHOULDA
+
+  if options[:simplecov]
+    insert_into_file 'spec/spec_helper.rb', <<SIMPLECOV, after: "# See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration\n"
+require 'simplecov'
+SimpleCov.start 'rails'
+SIMPLECOV
+
+    insert_into_file 'features/support/env.rb', <<SIMPLECOV, after: "require 'cucumber/rails'\n"
+require 'simplecov'
+SimpleCov.start 'rails'
+SIMPLECOV
+  end
 
   rake 'db:create' if options[:init_db]
 
