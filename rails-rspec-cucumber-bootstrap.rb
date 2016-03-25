@@ -16,7 +16,8 @@ options = {
                   available: [:devise, :clearance],
                   wanted: :clearance,
                   clearance: { generate_views: false }
-                 }
+                 },
+           administrate: false
           }
 
 puts ""
@@ -68,6 +69,7 @@ if options[:auth_config]
     options[:auth][:clearance][:generate_views] = yes? "Do you want to generate views? [yn]"
   end
 end
+options[:administrate] = yes? "Do you want to install administrate? [yn]"
 
 puts ""
 
@@ -104,6 +106,7 @@ gem 'nprogress-rails'
 gem "autoprefixer-rails"
 gem 'bootstrap', '~> 4.0.0.alpha3'
 gem options[:auth][:wanted].to_s if options[:auth_config]
+gem "administrate", "~> 0.1.4" if options[:administrate]
 
 append_to_file 'Gemfile', <<TETHER
 
@@ -279,6 +282,12 @@ SIMPLECOV
         git commit: '-a -m "Generate auth views"'
       end
     end
+  end
+
+  if options[:administrate]
+    generate 'administrate:install'
+    git add: '.'
+    git commit: '-a -m "Install administrate"'
   end
 
   if options[:init_db]
