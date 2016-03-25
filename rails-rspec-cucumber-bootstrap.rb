@@ -10,7 +10,12 @@ options = {
            init_db: false,
            ruby_version: RUBY_VERSION,
            rubocop: false,
-           simplecov: false
+           simplecov: false,
+           auth_config: false,
+           auth: {
+                  available: [:devise, :clearance],
+                  wanted: :clearance
+                 }
           }
 
 puts ""
@@ -47,6 +52,18 @@ puts "    -----"
 puts ""
 
 options[:init_db] = yes? "Do you want to create the database? [yn]"
+options[:auth_config] = yes? "Do you want to add an authentication? [yn]"
+if options[:auth_config]
+  auth_opts = options[:auth][:available].map { |opt| opt.to_s }.join('/')
+  loop do
+    wanted = ask "Which authentication system do you want? [#{auth_opts}]"
+    opt_ok = options[:auth][:available].include? wanted.to_sym
+    if opt_ok
+      options[:auth][:wanted] = wanted
+      break
+    end
+  end
+end
 
 puts ""
 
@@ -82,6 +99,7 @@ gem 'haml-rails', '~> 0.9'
 gem 'nprogress-rails'
 gem "autoprefixer-rails"
 gem 'bootstrap', '~> 4.0.0.alpha3'
+gem options[:auth][:wanted].to_s if options[:auth_config]
 
 append_to_file 'Gemfile', <<TETHER
 
@@ -184,38 +202,6 @@ Rails:
 RUBOCOP
 
 after_bundle do
-  run 'spring stop'
-  run 'spring binstub --all'
-  generate 'rspec:install'
-  generate 'cucumber:install'
-
-  run 'guard init rspec'
-  run 'guard init cucumber'
-
-  append_to_file 'spec/rails_helper.rb', <<SHOULDA
-Shoulda::Matchers.configure do |config|
-  config.integrate do |with|
-    with.test_framework :rspec
-
-    with.library :rails
-  end
-end
-SHOULDA
-
-  if options[:simplecov]
-    insert_into_file 'spec/spec_helper.rb', <<SIMPLECOV, after: "# See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration\n"
-require 'simplecov'
-SimpleCov.start 'rails'
-SIMPLECOV
-
-    insert_into_file 'features/support/env.rb', <<SIMPLECOV, after: "require 'cucumber/rails'\n"
-require 'simplecov'
-SimpleCov.start 'rails'
-SIMPLECOV
-  end
-
-  rake 'db:create' if options[:init_db]
-
   git :init
 
   if options[:git_config]
@@ -230,7 +216,56 @@ SIMPLECOV
   git commit: '-m "Ruby"'
 
   git add: '.'
-  git commit: '-a -m "rails-rspec-cucumber init"'
+  git commit: '-a -m "Rails init with gemfile"'
+
+  run 'spring stop'
+  run 'spring binstub --all'
+
+  generate 'rspec:install'
+  run 'guard init rspec'
+  append_to_file 'spec/rails_helper.rb', <<SHOULDA
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+
+    with.library :rails
+  end
+end
+SHOULDA
+
+  git add: '.'
+  git commit: '-a -m "Rspec with guard and shoulda matchers"'
+
+  generate 'cucumber:install'
+  run 'guard init cucumber'
+
+  git add: '.'
+  git commit: '-a -m "Cucumber with guard"'
+
+  if options[:simplecov]
+    insert_into_file 'spec/spec_helper.rb', <<SIMPLECOV, after: "# See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration\n"
+require 'simplecov'
+SimpleCov.start 'rails'
+SIMPLECOV
+
+    insert_into_file 'features/support/env.rb', <<SIMPLECOV, after: "require 'cucumber/rails'\n"
+require 'simplecov'
+SimpleCov.start 'rails'
+SIMPLECOV
+
+    git add: '.'
+    git commit: '-a -m "Simplecov"'
+  end
+
+  rake 'db:create' if options[:init_db]
+
+  if options[:auth_config]
+    auth = options[:auth][:wanted].to_s + ':'
+    generate(auth + 'install')
+
+    git add: '.'
+    git commit: "-a -m \"Authentication with #{options[:auth][:wanted].to_s}\""
+  end
 
   git checkout: 'master'
   git merge: '--no-ff -m "Initialize Rails boilerplate" init'
