@@ -14,7 +14,8 @@ options = {
            auth_config: false,
            auth: {
                   available: [:devise, :clearance],
-                  wanted: :clearance
+                  wanted: :clearance,
+                  clearance: { generate_views: false }
                  }
           }
 
@@ -59,9 +60,12 @@ if options[:auth_config]
     wanted = ask "Which authentication system do you want? [#{auth_opts}]"
     opt_ok = options[:auth][:available].include? wanted.to_sym
     if opt_ok
-      options[:auth][:wanted] = wanted
+      options[:auth][:wanted] = wanted.to_sym
       break
     end
+  end
+  if options[:auth][:wanted] == :clearance
+    options[:auth][:clearance][:generate_views] = yes? "Do you want to generate views? [yn]"
   end
 end
 
@@ -265,6 +269,16 @@ SIMPLECOV
 
     git add: '.'
     git commit: "-a -m \"Authentication with #{options[:auth][:wanted].to_s}\""
+
+    if options[:auth][:wanted] == :clearance
+      if options[:auth][:clearance][:generate_views]
+        remove_file 'app/views/layouts/application.html.erb'
+        generate(auth + 'views')
+
+        git add: '.'
+        git commit: '-a -m "Generate auth views"'
+      end
+    end
   end
 
   git checkout: 'master'
