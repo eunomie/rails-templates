@@ -281,6 +281,16 @@ SIMPLECOV
     end
   end
 
+  if options[:init_db]
+    rake 'db:migrate'
+    git add: '.'
+    git commit: '-a -m "Migrate"'
+  end
+
+  rake 'haml:erb2haml'
+  git add: '.'
+  git commit: '-a -m "Convert views to haml"'
+
   git checkout: 'master'
   git merge: '--no-ff -m "Initialize Rails boilerplate" init'
   git branch: '-d init'
