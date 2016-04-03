@@ -170,7 +170,7 @@ file 'app/assets/stylesheets/application.scss', <<CSS
 @import 'nprogress';
 @import 'nprogress-bootstrap';
 
-@import 'alerts';
+@import 'alert';
 CSS
 
 file 'app/assets/javascripts/application.js', <<JS
