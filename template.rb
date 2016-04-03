@@ -260,6 +260,8 @@ require 'simplecov'
 SimpleCov.start 'rails'
 SIMPLECOV
 
+    append_to_file '.gitignore', 'coverage'
+
     git add: '.'
     git commit: '-a -m "Simplecov"'
   end
