@@ -31,7 +31,7 @@ Execute `rails` command without tests and turbolinks. By example:
 
 ```
 rails new testapp -d postgresql --skip-turbolinks -T \
-  -m https://raw.githubusercontent.com/eunomie/rails-templates/master/rails-rspec-cucumber-bootstrap.rb
+  -m https://raw.githubusercontent.com/eunomie/rails-templates/master/template.rb
 ```
 
 Contributing
