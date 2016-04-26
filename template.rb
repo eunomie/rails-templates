@@ -246,6 +246,12 @@ SHOULDA
   generate 'cucumber:install'
   run 'guard init cucumber'
 
+  insert_into_file 'features/support/env.rb', <<CUCUMBER, after: "require 'cucumber/rails'\n"
+require 'faker'
+
+World(FactoryGirl::Syntax::Methods)
+CUCUMBER
+
   git add: '.'
   git commit: '-a -m "Cucumber with guard"'
 
