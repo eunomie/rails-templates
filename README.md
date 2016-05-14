@@ -3,9 +3,6 @@ Rails templates
 
 A simple collection of templates for [Rails](http://rubyonrails.org).
 
-rails-rspec-cucumber-bootstrap
-------------------------------
-
 Initialize a rails app with:
 
 - [rspec](https://github.com/rspec/rspec) (with [guard](https://github.com/guard/guard-rspec))

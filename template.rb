@@ -1,8 +1,4 @@
-# -d postgresql --skip-turbolinks -T -m rails-rspec-cucumber-bootstrap.rb
-
-# TODO:
-# - rubocop
-# - coverage
+# -d postgresql --skip-turbolinks -T -m template.rb
 
 options = {
            git_config: false,
