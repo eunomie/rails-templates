@@ -226,6 +226,8 @@ end
 ENV
 end
 
+gsub_file 'Gemfile', "source 'https://rubygems.org'", "source 'http://production.cf.rubygems.org'"
+
 after_bundle do
   git :init
 
