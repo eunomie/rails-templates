@@ -74,7 +74,7 @@ ruby-#{options[:ruby_version]}
 RUBY
 
 gem_group :development, :test do
-  gem 'rspec-rails', '~> 3.0'
+  gem 'rspec-rails', '~> 3.4'
   gem 'factory_girl_rails'
   gem 'faker'
   if options[:rubocop]
@@ -100,9 +100,9 @@ gem 'haml', '~> 4.0.7'
 gem 'haml-rails', '~> 0.9'
 gem 'nprogress-rails'
 gem "autoprefixer-rails"
-gem 'bootstrap', '~> 4.0.0.alpha3'
+gem 'bootstrap', '~> 4.0.0.alpha'
 gem options[:auth][:wanted].to_s if options[:auth_config]
-gem "administrate", "~> 0.1.4" if options[:administrate]
+gem "administrate", "~> 0.2" if options[:administrate]
 
 append_to_file 'Gemfile', <<TETHER
 
