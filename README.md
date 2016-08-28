@@ -16,6 +16,8 @@ Initialize a rails app with:
 - [turbolinks 5](https://github.com/turbolinks/turbolinks)
 - [nprogress](https://github.com/caarlos0/nprogress-rails)
 - [haml](https://github.com/haml/haml)
+- [dotenv](https://github.com/bkeepers/dotenv) (_optional_)
+- [env!](https://github.com/jcamenisch/ENV_BANG) (_optional_)
 - an authentication system ([devise](https://github.com/plataformatec/devise) or [clearance](https://github.com/thoughtbot/clearance)) (_optional_)
 - [administrate](https://github.com/thoughtbot/administrate) (_optional_)
 - scss syntax
@@ -28,6 +30,7 @@ The template asks if you want:
 - to install rubocop
 - to install simplecov
 - to create the database (run `rake db:create`)
+- to configure environment variables gem (dotenv, env!)
 - to add an authentication system (devise, clearance)
 - to install administrate
 
