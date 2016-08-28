@@ -1,4 +1,4 @@
-# -d postgresql --skip-turbolinks -T -m template.rb
+# -d postgresql -T -m template.rb
 
 options = {
            git_config: false,
@@ -97,7 +97,6 @@ gem_group :test do
   end
 end
 
-gem 'turbolinks', '~> 5.0.0.beta'
 gem 'haml', '~> 4.0.7'
 gem 'haml-rails', '~> 0.9'
 gem 'nprogress-rails'
