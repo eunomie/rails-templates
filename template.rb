@@ -7,6 +7,7 @@ options = {
            ruby_version: RUBY_VERSION,
            rubocop: false,
            simplecov: false,
+           env: false,
            auth_config: false,
            auth: {
                   available: [:devise, :clearance],
@@ -50,6 +51,7 @@ puts "    -----"
 puts ""
 
 options[:init_db] = yes? "Do you want to create the database? [yn]"
+options[:env] = yes? "Do you want to handle ENV variables? [yn]"
 options[:auth_config] = yes? "Do you want to add an authentication? [yn]"
 if options[:auth_config]
   auth_opts = options[:auth][:available].map { |opt| opt.to_s }.join('/')
@@ -102,6 +104,8 @@ gem 'nprogress-rails'
 gem "autoprefixer-rails"
 gem 'bootstrap', '~> 4.0.0.alpha'
 gem options[:auth][:wanted].to_s if options[:auth_config]
+gem 'dotenv-rails' if options[:env]
+gem 'env_bang-rails' if options[:env]
 gem "administrate", "~> 0.2" if options[:administrate]
 
 append_to_file 'Gemfile', <<TETHER
@@ -203,6 +207,25 @@ file '.rubocop.yml', <<RUBOCOP
 Rails:
   Enabled: true
 RUBOCOP
+
+if options[:env]
+  file '.env', <<ENV
+# Define here all environment variables you want
+# See config/env.rb to see mandatory var to define in .env.<rails env> file
+ENV
+
+  file 'config/env.rb', <<ENV
+ENV!.config do
+  default_class String
+  # Define here all mandatory environment variables to set
+  # before be able to run rails.
+  #
+  # By example if you want to force user to set log redirection to
+  # STDOUT in production, simply uncomment the following ling
+  # use :RAILS_LOG_TO_STDOUT, 'Log to STDOUT' if Rails.env.production?
+end
+ENV
+end
 
 after_bundle do
   git :init
